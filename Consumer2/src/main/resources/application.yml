@@ -1,0 +1,36 @@
+server:
+  port: 28080
+logging:
+  level:
+    com.example.consumer2.service: debug
+spring:
+  # Kafka Setting ( Consumer (Receiver), Producer (Sender) )
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: group-id-hello
+      auto-offset-reset: earliest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          deserializer:
+            key:
+              delegate:
+                class: org.apache.kafka.common.serialization.StringDeserializer
+            value:
+              delegate:
+                class: org.springframework.kafka.support.serializer.JsonDeserializer
+          json:
+            type:
+              mapping: messageDTO:com.example.consumer2.model.MessageDTO
+            trusted:
+              packages: "*"
+      # ??? ??? ???? ???? ??
+      max-poll-records: 1
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        "[spring.json.type.mapping]": messageDTO:com.example.consumer2.model.MessageDTO
